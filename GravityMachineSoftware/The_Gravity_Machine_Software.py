@@ -852,7 +852,7 @@ class Camera_Functions(QtCore.QObject):
 		
 		
 		#thread to et the image
-		self.VideoSrc = VideoStream(src = self.camera_port,CAMERA = self.CAMERA, Serial = self.serial, 
+		self.VideoSrc = VideoStream(src = self.camera_port, CAMERA = self.CAMERA, Serial = self.serial, 
 		resolution = self.camResolution,framerate = self.camFPS, color = self.color) # Grab a reference to a VideoStream object (cross-platform functionality)
 		self.VideoSrc.set_property("Trigger Mode", False)
 	# if(self.color==True):
@@ -865,10 +865,8 @@ class Camera_Functions(QtCore.QObject):
 		self.VideoSrc.set_property("Exposure Auto", False)
 		self.VideoSrc.set_property("Exposure", 100)
 		# if(self.trackingStream):
-		self.VideoSrc.set_property("Trigger Delay (us)", 0)
+		
 		# else:
-
-		self.VideoSrc.set_property("Trigger Polarity", "RisingEdge")
 		self.VideoSrc.set_property("Trigger Mode", False) # for now this needs to be here
 		self.VideoSrc.start()
 
@@ -876,6 +874,9 @@ class Camera_Functions(QtCore.QObject):
 		# if(self.trackingStream):
 		time.sleep(2.0)
 		self.VideoSrc.set_property("Trigger Mode", True)
+		self.VideoSrc.set_property("Trigger Polarity", "RisingEdge")
+		self.VideoSrc.set_property("Trigger Delay (us)", 0)
+
 		# print('Set Trigger Mode of Channel : {} to True'.format(self.channel))
 		#----------------------------------------------------------
 		# This allows readFrame (the main function that handles the output of the video stream), 
@@ -966,7 +967,8 @@ class Camera_Functions(QtCore.QObject):
 	def start_displaying(self):
 		#camera warmup
 		for i in range(self.rampFrames):
-			temp = self.VideoSrc.read() 
+			temp = self.VideoSrc.read()
+			print(temp) 
 
 		if(temp.shape[1]==0):
 			print("Maybe plug and unplug your camera dude !")   
@@ -975,6 +977,8 @@ class Camera_Functions(QtCore.QObject):
 		self.timer.start(0,self) #Launch the QTimer --> images will begin to be read
 
 	def saveFrame(self, img, current_time):
+
+		print('Saving image...')
 
 		if(self.saved_img_nb_local >= self.images_per_folder):
 			# Create a new sub directory to save the images
@@ -1599,14 +1603,14 @@ class CentralWidget(QtWidgets.QWidget):
 		3. DF1 + DF2 + FL 
 		4. etc.
 		"""
-		self.imaging_channels = ['DF', 'FL']
+		self.imaging_channels = ['DF']
 
 
 		# Set the DF channel to be the tracking channel
 		self.tracking_channel = 'DF'
 
 		# Sets whether each video stream is displayed in a new window or in the main GUI window
-		self.window_style = {'DF':False, 'FL':True}
+		self.window_style = {'DF':False}
 		#------------------------------------------------------------
 		#DISPLAYING THREAD
 		#------------------------------------------------------------
@@ -1650,20 +1654,19 @@ class CentralWidget(QtWidgets.QWidget):
 	
 		#Camera(s) / Video Stream (s)
 		# # Berg cameras
-		# self.df_camera = "08910102"
-		
+		self.df_camera = "08910102"
 		# self.fl_camera = "08910100"
 
 		# GM-H-1 cameras
-		self.df_camera = "48910083"
+		# self.df_camera = "48910083"
 		
-		self.fl_camera = "48910098"
+		# self.fl_camera = "48910098"
 
 		self.cameras = {key:[] for key in self.imaging_channels}
 
 		# Assign a physical camera to each video stream (we can implement a drop-down menu if we want later)
 		self.cameras['DF'] = self.df_camera
-		self.cameras['FL'] = self.fl_camera
+		# self.cameras['FL'] = self.fl_camera
 
 		# self.df_camera = "17910090"
 		self.color = False
@@ -1683,9 +1686,9 @@ class CentralWidget(QtWidgets.QWidget):
 			dispThreshStream = True)
 
 		# FL stream
-		self.camera_functions['FL'] = Camera_Functions(channel = 'FL', camera_port = 0, Serial = self.cameras['FL'], 
-			resolution = (1920,1080), camFPS = 30, color = False, saveStream = True, trackingStream = False, 
-			dispThreshStream = False)
+		# self.camera_functions['FL'] = Camera_Functions(channel = 'FL', camera_port = 0, Serial = self.cameras['FL'], 
+		# 	resolution = (1920,1080), camFPS = 30, color = False, saveStream = True, trackingStream = False, 
+		# 	dispThreshStream = False)
 
 
 		# self.camera_functions=Camera_Functions(camera_port = 0, Serial = self.fl_camera, resolution = (1920,1080), camFPS = 120, color = False)
@@ -2189,6 +2192,8 @@ class CentralWidget(QtWidgets.QWidget):
 		
 	def save_video(self, channel = 'DF'):
 		# Function that is called when we click the Save Video button. Which is the start of recording a dataset.
+		prinr('Saving {} frame'.format(channel))
+
 		if self.button_video[channel].isChecked():
 			# directory=self.folder_path+'/'+self.videoName.text()
 
@@ -2776,7 +2781,7 @@ class MainWindowMill(QtWidgets.QMainWindow):
 		
 		#WIDGETS
 		
-		self.central_widget=CentralWidget()  
+		self.central_widget = CentralWidget()  
 		self.setCentralWidget(self.central_widget)
 		   
 	
@@ -2833,9 +2838,10 @@ if __name__ == '__main__':
 	for channel in win.central_widget.imaging_channels:
 		win.central_widget.camera_functions[channel].start_displaying()
 
-		
+	print('Start display successful')
 	win.show()
 	splash.finish(win)
+	print('Window display successful')
 	
 	if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
 		QtGui.QApplication.instance().exec_()

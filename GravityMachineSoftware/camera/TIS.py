@@ -161,7 +161,10 @@ class TIS:
 
     def Set_Property(self, PropertyName, value):
         try:
-            self.source.set_tcam_property(PropertyName,GObject.Value(type(value),value))
+            print('setting ' + PropertyName + ' to ' + str(value))
+            self.source.set_tcam_property(PropertyName, GObject.Value(type(value),value))
+            print('Successfully set ' + PropertyName + ' to ' + str(value))
+            
         except GLib.Error as error:
-            print("Error set Property {0}: {1}",PropertyName, format(err))
+            print("Error setting Property {0}: {1}",PropertyName, format(err))
             raise

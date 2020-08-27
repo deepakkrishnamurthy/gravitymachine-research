@@ -24,7 +24,7 @@ class Arduino_Communication():
         self.serialconn=None
         self.platformName = platform.system()
         self.sendBufferSize = 17
-        self.recBufferSize = 28
+        self.recBufferSize = 27
 
     def send_Integer(self,entier):
         if(sys.version_info[0] < 3):

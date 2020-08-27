@@ -852,6 +852,8 @@ void loop()
         sample_interval_FL_prev = sample_interval_FL;
         // Sampling interval for FL images (100*seconds)
         sample_interval_FL = int(buffer_rx[15] + int(buffer_rx[16]) << 8 + int(buffer_rx[17]) << 16);
+        
+        
         if(sample_interval_FL_prev != sample_interval_FL)
         {
           updateNumTimerCycles();
