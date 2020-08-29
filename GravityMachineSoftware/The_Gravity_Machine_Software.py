@@ -2192,7 +2192,6 @@ class CentralWidget(QtWidgets.QWidget):
 		
 	def save_video(self, channel = 'DF'):
 		# Function that is called when we click the Save Video button. Which is the start of recording a dataset.
-		prinr('Saving {} frame'.format(channel))
 
 		if self.button_video[channel].isChecked():
 			# directory=self.folder_path+'/'+self.videoName.text()
