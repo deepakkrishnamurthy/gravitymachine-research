@@ -18,7 +18,6 @@ from control._def import *
 import control.widgets as widgets
 import control.widgets_tracking as widgets_tracking
 import control.widgets_volumetric_imaging as widgets_volumetric_imaging
-import control.camera_TIS as camera_TIS
 import control.camera as camera_Daheng
 import control.core as core
 import control.core_tracking as core_tracking
@@ -58,6 +57,7 @@ class GUI(QMainWindow):
 			self.camera = {}
 			for key in self.imaging_channels:
 				if(CAMERAS[key]['make']=='TIS'):
+					import control.camera_TIS as camera_TIS
 					self.camera[key] = camera_TIS.Camera(serial=CAMERAS[key]['serial'], width = CAMERAS[key]['px_format'][0], 
 						height = CAMERAS[key]['px_format'][1], framerate = CAMERAS[key]['fps'], color = CAMERAS[key]['is_color'])
 				elif (CAMERAS[key]['make']=='Daheng'):
