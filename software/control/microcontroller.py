@@ -706,6 +706,31 @@ class Microcontroller_Simulation():
         self.send_command(cmd)
     '''
 
+    def set_off_set_velocity_x(self,off_set_velocity):
+        # off_set_velocity is in mm/s
+        cmd = bytearray(self.tx_buffer_length)
+        cmd[1] = CMD_SET.SET_OFFSET_VELOCITY
+        cmd[2] = AXIS.X
+        off_set_velocity = int(off_set_velocity*1000000)
+        payload = self._int_to_payload(off_set_velocity,4)
+        cmd[3] = payload >> 24
+        cmd[4] = (payload >> 16) & 0xff
+        cmd[5] = (payload >> 8) & 0xff
+        cmd[6] = payload & 0xff
+        self.send_command(cmd)
+
+    def set_off_set_velocity_y(self,off_set_velocity):
+        cmd = bytearray(self.tx_buffer_length)
+        cmd[1] = CMD_SET.SET_OFFSET_VELOCITY
+        cmd[2] = AXIS.Y
+        off_set_velocity = int(off_set_velocity*1000000)
+        payload = self._int_to_payload(off_set_velocity,4)
+        cmd[3] = payload >> 24
+        cmd[4] = (payload >> 16) & 0xff
+        cmd[5] = (payload >> 8) & 0xff
+        cmd[6] = payload & 0xff
+        self.send_command(cmd)
+
     def home_x(self):
         self.x_pos = 0
         cmd = bytearray(self.tx_buffer_length)
@@ -942,4 +967,19 @@ class Microcontroller_Simulation():
         # self._mcu_cmd_execution_status = CMD_EXECUTION_STATUS.COMPLETED_WITHOUT_ERRORS
         # self.timer_update_command_execution_status.stop()
         pass # timer cannot be started from another thread
+
+    def _int_to_payload(self,signed_int,number_of_bytes):
+        if signed_int >= 0:
+            payload = signed_int
+        else:
+            payload = 2**(8*number_of_bytes) + signed_int # find two's completement
+        return payload
+
+    def _payload_to_int(self,payload,number_of_bytes):
+        signed = 0
+        for i in range(number_of_bytes):
+            signed = signed + int(payload[i])*(256**(number_of_bytes-1-i))
+        if signed >= 256**number_of_bytes/2:
+            signed = signed - 256**number_of_bytes
+        return signed
 

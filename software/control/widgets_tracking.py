@@ -183,6 +183,7 @@ class TrackingControllerWidget(QFrame):
 
 	def do_track_button_tasks(self):
 		if self.btn_track.isChecked():
+			self.microcontroller.set_off_set_velocity_y(0) # to do: connect this to the offset velocity control widget
 			self.internal_state.data['image_tracking_enabled'] = True
 			if(self.tracking_init_roi.isChecked()):
 				self.trackingController.update_roi_bbox()
@@ -434,11 +435,33 @@ class NavigationWidget(QFrame):
 			grid_line4.addWidget(self.btn_set_z_limit_pos, 2,5)
 			grid_line4.addWidget(self.btn_clear_z_limits, 2,6)
 
+		# add offset velocity
+		if TRACKING_CONFIG == 'XTheta_Y' or TRACKING_CONFIG == 'XZ_Y':
+			grid_line5 = QHBoxLayout()
+			self.entry_vz = QDoubleSpinBox()
+			self.entry_vz.setMinimum(-10)
+			self.entry_vz.setMaximum(10)
+			self.entry_vz.setSingleStep(0.001)
+			self.entry_vz.setValue(0)
+			self.entry_vz.setDecimals(4)
+			self.entry_vz.setKeyboardTracking(False)
+			self.entry_vz.valueChanged.connect(self.update_offset_velocity_y)
+			self.btn_vz_enable = QPushButton('Enable/Disable Offset Velocity')
+			self.btn_vz_enable.setDefault(False)
+			self.btn_vz_enable.setCheckable(True)
+			self.btn_vz_enable.clicked.connect(self.enable_offset_velocity)
+			grid_line5.addWidget(QLabel('Z offset velocity (mm/s)'))
+			grid_line5.addWidget(self.entry_vz)
+			grid_line5.addWidget(self.btn_vz_enable)
+
 		self.grid = QGridLayout()
 		self.grid.addLayout(grid_line0,0,0)
 		self.grid.addLayout(grid_line1,1,0)
 		self.grid.addLayout(grid_line2,2,0)
 		self.grid.addLayout(grid_line4,4,0)
+		# add offset velocity
+		if TRACKING_CONFIG == 'XTheta_Y':
+			self.grid.addLayout(grid_line5,5,0)
 		self.setLayout(self.grid)
 
 		self.btn_moveX_forward.clicked.connect(self.move_x_forward)
@@ -733,6 +756,16 @@ class NavigationWidget(QFrame):
 			self.microcontroller.set_lim(LIMIT_CODE.Y_POSITIVE,2147483647)
 		self.label_z_limit_neg.setText('-inf')
 		self.label_z_limit_pos.setText('+inf')
+
+	def update_offset_velocity_y(self,offset_velocity):
+		if self.btn_vz_enable.isChecked():
+			self.microcontroller.set_off_set_velocity_y(offset_velocity)
+
+	def enable_offset_velocity(self,pressed):
+		if pressed:
+			self.microcontroller.set_off_set_velocity_y(self.entry_vz.value())
+		else:
+			self.microcontroller.set_off_set_velocity_y(0)
 
 class PID_Group_Widget(QFrame):
 	def __init__(self, trackingController):
