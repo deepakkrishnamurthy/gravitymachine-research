@@ -4,7 +4,8 @@
 #include <AccelStepper.h>
 #include <Adafruit_DotStar.h>
 #include <SPI.h>
-#include "def_octopi.h"
+//#include "def_octopi.h"
+#include "def_gmx_withoutencoders.h"
 //#include "def_gravitymachine.h"
 //#include "def_squid.h"
 //#include "def_platereader.h"
@@ -968,14 +969,14 @@ void loop() {
             switch(buffer_rx[2])
             {
               case AXIS_X:
-                offset_velocity_x = float( int32_t(uint32_t(buffer_rx[2])*16777216 + uint32_t(buffer_rx[3])*65536 + uint32_t(buffer_rx[4])*256 + uint32_t(buffer_rx[5])) )/1000000;
+                offset_velocity_x = float( int32_t(uint32_t(buffer_rx[3])*16777216 + uint32_t(buffer_rx[4])*65536 + uint32_t(buffer_rx[5])*256 + uint32_t(buffer_rx[6])) )/1000000;
                 if( abs(offset_velocity_x)>0.000005 )
                   runSpeed_flag_X = true;
                 else
                   runSpeed_flag_X = false;
                 break;
               case AXIS_Y:
-                offset_velocity_y = float( int32_t(uint32_t(buffer_rx[2])*16777216 + uint32_t(buffer_rx[3])*65536 + uint32_t(buffer_rx[4])*256 + uint32_t(buffer_rx[5])) )/1000000;
+                offset_velocity_y = float( int32_t(uint32_t(buffer_rx[3])*16777216 + uint32_t(buffer_rx[4])*65536 + uint32_t(buffer_rx[5])*256 + uint32_t(buffer_rx[6])) )/1000000;
                 if( abs(offset_velocity_y)>0.000005 )
                   runSpeed_flag_Y = true;
                 else
