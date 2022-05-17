@@ -628,7 +628,7 @@ class NavigationWidget(QFrame):
 		dTheta_degree = self.entry_dTheta.value()
 		dTheta_rad = (dTheta_degree/360)*2*np.pi
 		dTheta_usteps = dTheta_rad/((2*np.pi)/(FULLSTEPS_PER_REV_THETA*self.navigationController.theta_microstepping*GEAR_RATIO_THETA))
-		self.navigationController.move_y_usteps(dTheta_usteps)
+		self.navigationController.move_y_usteps(-dTheta_usteps)
 	def home_theta(self):
 		msg = QMessageBox()
 		msg.setIcon(QMessageBox.Information)
