@@ -147,6 +147,9 @@ class GUI(QMainWindow):
 		# tracking start/stop
 		self.trackingController.signal_stop_tracking.connect(self.trackingControlWidget.slot_stop_tracking)
 		self.trackingController.signal_stop_tracking.connect(self.streamHandler[TRACKING].stop_tracking)		
+
+		# offset velocity
+		self.trackingControlWidget.signal_disable_offset_velocity.connect(self.navigationWidget.slot_disable_offset_velocity)
 		
 		#-----------------------------------------------------
 		# Dock area for image display
