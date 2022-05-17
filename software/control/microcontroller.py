@@ -321,7 +321,7 @@ class Microcontroller():
         cmd = bytearray(self.tx_buffer_length)
         cmd[1] = CMD_SET.SET_OFFSET_VELOCITY
         cmd[2] = AXIS.X
-        off_set_velocity = off_set_velocity*1000000
+        off_set_velocity = int(off_set_velocity*1000000)
         payload = self._int_to_payload(off_set_velocity,4)
         cmd[3] = payload >> 24
         cmd[4] = (payload >> 16) & 0xff
@@ -330,10 +330,11 @@ class Microcontroller():
         self.send_command(cmd)
 
     def set_off_set_velocity_y(self,off_set_velocity):
+        print('set offset velocity to ' + str(off_set_velocity))
         cmd = bytearray(self.tx_buffer_length)
         cmd[1] = CMD_SET.SET_OFFSET_VELOCITY
         cmd[2] = AXIS.Y
-        off_set_velocity = off_set_velocity*1000000
+        off_set_velocity = int(off_set_velocity*1000000)
         payload = self._int_to_payload(off_set_velocity,4)
         cmd[3] = payload >> 24
         cmd[4] = (payload >> 16) & 0xff
