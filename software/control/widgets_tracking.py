@@ -28,6 +28,7 @@ class TrackingControllerWidget(QFrame):
 
 	'''
 	show_roi = Signal(bool)
+	signal_disable_offset_velocity = Signal()
 
 	def __init__(self, streamHandler, trackingController, trackingDataSaver, internal_state, ImageDisplayWindow, microcontroller, main=None, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -183,7 +184,10 @@ class TrackingControllerWidget(QFrame):
 
 	def do_track_button_tasks(self):
 		if self.btn_track.isChecked():
-			self.microcontroller.set_off_set_velocity_y(0) # to do: connect this to the offset velocity control widget
+			if self.internal_state.data['stage_tracking_enabled'] == True:
+				# disable offset velocity when stage tracking is enabled
+				# self.microcontroller.set_off_set_velocity_y(0) # to do: connect this to the offset velocity control widget
+				self.signal_disable_offset_velocity.emit()
 			self.internal_state.data['image_tracking_enabled'] = True
 			if(self.tracking_init_roi.isChecked()):
 				self.trackingController.update_roi_bbox()
@@ -439,8 +443,8 @@ class NavigationWidget(QFrame):
 		if TRACKING_CONFIG == 'XTheta_Y' or TRACKING_CONFIG == 'XZ_Y':
 			grid_line5 = QHBoxLayout()
 			self.entry_vz = QDoubleSpinBox()
-			self.entry_vz.setMinimum(-10)
-			self.entry_vz.setMaximum(10)
+			self.entry_vz.setMinimum(-25)
+			self.entry_vz.setMaximum(25)
 			self.entry_vz.setSingleStep(0.001)
 			self.entry_vz.setValue(0)
 			self.entry_vz.setDecimals(4)
@@ -766,6 +770,11 @@ class NavigationWidget(QFrame):
 			self.microcontroller.set_off_set_velocity_y(self.entry_vz.value())
 		else:
 			self.microcontroller.set_off_set_velocity_y(0)
+
+	def slot_disable_offset_velocity(self):
+		print('disable offset velocity')
+		self.microcontroller.set_off_set_velocity_y(0)
+		self.btn_vz_enable.setChecked(False)
 
 class PID_Group_Widget(QFrame):
 	def __init__(self, trackingController):
