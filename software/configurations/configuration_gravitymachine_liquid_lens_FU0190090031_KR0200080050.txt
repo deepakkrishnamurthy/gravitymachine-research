@@ -1,0 +1,98 @@
+CAMERAS = {
+'DF1':{'make':'Daheng','serial':'FU0190090031','px_format':(4000,3000),'color_format':'GRAY8','fps': 60,'is_color':True,'rotate image angle':-90,'flip image':None,'sensor':'IMX226'},
+'volumetric imaging':{'make':'Daheng','serial':'KR0200080050','px_format':(640,480),'color_format':'GRAY8','fps': 60,'is_color':False,'rotate image angle':0,'flip image':'Horizontal','sensor':'IMX178'}}
+
+TUBE_LENS_MM = {'DF1':75,'volumetric imaging':75}
+
+DEFAULT_OBJECTIVE = '4x'
+
+LIQUID_LENS_FOCUS_TRACKING = False
+TWO_CAMERA_PDAF = False
+PDAF_FLIPUD = False
+PDAF_FLIPLR = False
+PDAF_SHIFT_AXIS = 'X' #'X' or 'Y'
+
+STAGE_MOVEMENT_SIGN_X = 1
+STAGE_MOVEMENT_SIGN_Y = 1
+STAGE_MOVEMENT_SIGN_THETA = -1
+
+X_ENCODER_SIGN = 1
+Y_ENCODER_SIGN = 1
+THETA_ENCODER_SIGN = 1
+
+class Chamber:
+    # Chamber dimensions in mm
+    WIDTH = 5
+    R_I = 85
+    R_O = 110
+    LENGTH = (R_O - R_I)
+    R_HOME = 93 # Gravity Machine 4 Monterey 2021
+
+VOLUMETRIC_IMAGING = True
+USE_SEPARATE_TRIGGER_CONTROLLER = True
+TRIGGERCONTROLLER_SERIAL_NUMBER = '9179400' # '9178980'
+
+TRACKING_MOVEMENT_SIGN_X = -1
+TRACKING_MOVEMENT_SIGN_Y = 1
+TRACKING_MOVEMENT_SIGN_Z = -1
+
+###############################################
+STAGE_POS_SIGN_X = STAGE_MOVEMENT_SIGN_X
+STAGE_POS_SIGN_Y = STAGE_MOVEMENT_SIGN_Y
+STAGE_POS_SIGN_Z = STAGE_MOVEMENT_SIGN_Z
+STAGE_POS_SIGN_THETA = STAGE_MOVEMENT_SIGN_THETA
+
+USE_ENCODER_X = True
+USE_ENCODER_Y = True
+USE_ENCODER_Z = True
+USE_ENCODER_THETA = True
+
+ENCODER_POS_SIGN_X = 1
+ENCODER_POS_SIGN_Y = 1
+ENCODER_POS_SIGN_Z = 1
+ENCODER_POS_SIGN_THETA = 1
+
+ENCODER_STEP_SIZE_X_MM = 1000e-6
+ENCODER_STEP_SIZE_Y_MM = 1000e-6
+ENCODER_STEP_SIZE_Z_MM = 1000e-6
+ENCODER_STEP_SIZE_THETA = 2*np.pi/(300*4)
+
+FULLSTEPS_PER_REV_X = 200
+FULLSTEPS_PER_REV_Y = 200
+FULLSTEPS_PER_REV_Z = 200
+FULLSTEPS_PER_REV_THETA = 200
+
+SCREW_PITCH_X_MM = 1
+SCREW_PITCH_Y_MM = 1
+SCREW_PITCH_Z_MM = 0.012*25.4
+GEAR_RATIO_THETA = 99+(1044.0/2057.0)
+
+MICROSTEPPING_DEFAULT_X = 8
+MICROSTEPPING_DEFAULT_Y = 8
+MICROSTEPPING_DEFAULT_Z = 8
+MICROSTEPPING_DEFAULT_THETA = 8
+
+SCAN_STABILIZATION_TIME_MS_X = 160
+SCAN_STABILIZATION_TIME_MS_Y = 160
+SCAN_STABILIZATION_TIME_MS_Z = 20
+
+HOMING_ENABLED_X = False
+HOMING_ENABLED_Y = False
+HOMING_ENABLED_Z = False
+HOMING_ENABLED_THETA = False
+
+SLEEP_TIME_S = 0.005
+
+LED_MATRIX_R_FACTOR = 0
+LED_MATRIX_G_FACTOR = 0
+LED_MATRIX_B_FACTOR = 1
+
+class PDAF:
+    ROI_ratio_width_default = 2.5
+    ROI_ratio_height_default = 2.5
+    x_offset_default = 0
+    y_offset_default = 198
+    shift_to_distance_um_default = -5.0
+
+print('machine-specific configurations loaded')
+
