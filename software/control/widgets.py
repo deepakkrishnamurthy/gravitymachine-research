@@ -753,3 +753,53 @@ class LEDMatrixControlWidget(QFrame):
 				b=(self.entry_intensity.value()/100.0)*(self.entry_B.value()))
 		else:
 			self.microcontroller.set_illumination(self.illumination_source,self.intensity)
+
+class LEDControlWidget(QFrame):
+
+	def __init__(self,microcontroller):
+		super().__init__()
+		self.microcontroller = microcontroller
+		self.illumination_source = 11
+		self.add_components()
+		self.setFrameStyle(QFrame.Panel | QFrame.Raised)
+
+	def add_components(self):
+		self.slider_intensity = QSlider(Qt.Horizontal)
+		self.slider_intensity.setTickPosition(QSlider.TicksBelow)
+		self.slider_intensity.setMinimum(0)
+		self.slider_intensity.setMaximum(100)
+		self.slider_intensity.setSingleStep(1)
+		self.slider_intensity.setValue(20)
+		self.entry_intensity = QDoubleSpinBox()
+		self.entry_intensity.setMinimum(0)
+		self.entry_intensity.setMaximum(100)
+		self.entry_intensity.setSingleStep(1)
+		self.entry_intensity.setValue(10)
+
+		self.btn_toggle = QPushButton('LED Matrix On/Off')
+		self.btn_toggle.setCheckable(True)
+		self.btn_toggle.setDefault(False)
+
+		grid = QGridLayout()
+		grid.addWidget(QLabel('Intensity'),4,0)
+		grid.addWidget(self.slider_intensity,4,1)
+		grid.addWidget(self.entry_intensity,4,2)
+		grid.addWidget(self.btn_toggle,5,0,1,3)
+		grid.setRowStretch(grid.rowCount(), 1)
+		self.setLayout(grid)
+
+		# connections
+		self.slider_intensity.valueChanged.connect(self.entry_intensity.setValue)
+		self.entry_intensity.valueChanged.connect(self.slider_intensity.setValue)
+		self.entry_intensity.valueChanged.connect(self.update_illumination)
+		self.btn_toggle.clicked.connect(self.toggle_illumination)
+
+	def toggle_illumination(self,on):
+		if on == True:
+			self.microcontroller.turn_on_illumination()
+		else:
+			self.microcontroller.turn_off_illumination()
+
+	def update_illumination(self):
+		self.microcontroller.set_illumination(self.illumination_source,self.entry_intensity.value())
+
